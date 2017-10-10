@@ -1,9 +1,5 @@
-from pudb import set_trace
-
-import gensim
 from gensim import corpora
 from gensim import models
-
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 import string
@@ -57,13 +53,9 @@ for doc in test_documents:
     print('\t {}'.format(doc))
 
 cleaned_test_documents = [clean(doc).split() for doc in test_documents]  
-# test_dictionary = corpora.Dictionary(cleaned_test_documents)
-# test_doc_term_matrix = [test_dictionary.doc2bow(doc) for doc in cleaned_test_documents]
-test_doc_term_matrix = [dictionary.doc2bow(doc) for doc in cleaned_test_documents]
+test_doc_term_matrix = [dictionary.doc2bow(doc) for doc in cleaned_test_documents] # working with the orig dict
 
 test_doc_topics = ldamodel[test_doc_term_matrix]
 
 for topic_mix in test_doc_topics:
     print(topic_mix[0], topic_mix[1])
-
-
