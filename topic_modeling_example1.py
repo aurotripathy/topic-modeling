@@ -42,13 +42,18 @@ doc_term_matrix = [dictionary.doc2bow(doc) for doc in cleaned_documents]
 # Train LDA model on the document term matrix.
 ldamodel = models.ldamodel.LdaModel(corpus=doc_term_matrix, num_topics=num_topics, id2word = dictionary, passes=50)
 
+topic_labels = []
 for topic in range(num_topics):
-    print('Topic #{}: {}'.format(topic, ldamodel.show_topic(topic,topn=top_words_count)))
+    words_in_topic = ldamodel.show_topic(topic,topn=top_words_count)
+    topic_label = words_in_topic[0][0] + '_' + words_in_topic[1][0] # top two words becomes the label
+    topic_labels.append(topic_label)
+    print('Topic #{}: {}: {}'.format(topic, topic_label, words_in_topic))
 
 
 test_documents = ["The user interface management system limitations",
                  "A survey of graph minors"]
 print('Testing model with following unseen documents:')
+
 for doc in test_documents:
     print('\t {}'.format(doc))
 
@@ -57,5 +62,5 @@ test_doc_term_matrix = [dictionary.doc2bow(doc) for doc in cleaned_test_document
 
 test_doc_topics = ldamodel[test_doc_term_matrix]
 
-for topic_mix in test_doc_topics:
-    print(topic_mix[0], topic_mix[1])
+for i, topic_mix in enumerate(test_doc_topics):
+    print('{} {} {} {} Doc: {}'.format(topic_labels[0], topic_mix[0][1], topic_labels[1], topic_mix[1][1], test_documents[i]))
