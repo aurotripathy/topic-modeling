@@ -50,8 +50,9 @@ for topic in range(num_topics):
     print('Topic #{}: {}: {}'.format(topic, topic_label, words_in_topic))
 
 
-test_documents = ["The user interface management system limitations",
-                 "A survey of graph minors"]
+test_documents = ["The user interface management system",
+                  "The intersection graph of paths in trees",
+                  "A survey of graph minors"]
 print('Testing model with following unseen documents:')
 
 for doc in test_documents:
@@ -62,5 +63,10 @@ test_doc_term_matrix = [dictionary.doc2bow(doc) for doc in cleaned_test_document
 
 test_doc_topics = ldamodel[test_doc_term_matrix]
 
-for i, topic_mix in enumerate(test_doc_topics):
-    print('{} {} {} {} Doc: {}'.format(topic_labels[0], topic_mix[0][1], topic_labels[1], topic_mix[1][1], test_documents[i]))
+import numpy as np
+for d, topic_mix in enumerate(test_doc_topics):
+    print('-------------')
+    print('Doc: {}'.format(test_documents[d]))
+    for t in range(num_topics):
+        print(topic_labels[t], topic_mix[t][1])
+    print('Topic: {}'.format(topic_labels[np.argmax(list(zip(*topic_mix))[1])]))
