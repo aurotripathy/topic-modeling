@@ -3,6 +3,11 @@ from gensim import models
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 import string
+import numpy as np
+
+
+FIXED_SEED = 42
+np.random.seed(FIXED_SEED) # Attempt at avoiding randomness during training
 
 documents = ["Human machine interface for lab abc computer applications",
              "A survey of user opinion of computer system response time",
@@ -39,8 +44,9 @@ dictionary = corpora.Dictionary(cleaned_documents)
 # Convert list of documents into Document Term Matrix using dictionary prepared above.
 doc_term_matrix = [dictionary.doc2bow(doc) for doc in cleaned_documents]
 
-# Train LDA model on the document term matrix.
-ldamodel = models.ldamodel.LdaModel(corpus=doc_term_matrix, num_topics=num_topics, id2word = dictionary, passes=50)
+# Train LDA model on the document term matrix. High number of iteration for LDA to converge
+ldamodel = models.ldamodel.LdaModel(corpus=doc_term_matrix, num_topics=num_topics, 
+                                    id2word = dictionary, passes=300)
 
 topic_labels = []
 for topic in range(num_topics):
@@ -61,6 +67,7 @@ for doc in test_documents:
 cleaned_test_documents = [clean(doc).split() for doc in test_documents]  
 test_doc_term_matrix = [dictionary.doc2bow(doc) for doc in cleaned_test_documents] # working with the orig dict
 
+np.random.seed(FIXED_SEED) # Attempt at avoiding randomness during inference
 test_doc_topics = ldamodel[test_doc_term_matrix]
 
 import numpy as np
@@ -69,4 +76,4 @@ for d, topic_mix in enumerate(test_doc_topics):
     print('Doc: {}'.format(test_documents[d]))
     for t in range(num_topics):
         print(topic_labels[t], topic_mix[t][1])
-    print('Topic: {}'.format(topic_labels[np.argmax(list(zip(*topic_mix))[1])]))
+    print('Predicted topic: {}'.format(topic_labels[np.argmax(list(zip(*topic_mix))[1])]))
